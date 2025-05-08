@@ -12,6 +12,12 @@
     <input type="text" id="user-input" placeholder="Type your message..." />
     <button id="send-btn">Send</button>
 
+    <h2>Upload Files</h2>
+    <input type="file" id="text-file" accept=".txt" />
+    <button id="upload-text-btn">Upload Text</button>
+    <input type="file" id="image-file" accept="image/*" />
+    <button id="upload-image-btn">Upload Image</button>
+
     <script>
         let conversation = [];
         $(document).ready(function() {
@@ -22,6 +28,38 @@
                     conversation.push({ role: 'assistant', content: data.response });
                     updateChatBox();
                     $('#user-input').val('');
+                });
+            });
+
+            $('#upload-text-btn').click(function() {
+                const fileInput = document.getElementById('text-file');
+                const file = fileInput.files[0];
+                const formData = new FormData();
+                formData.append('file', file);
+                $.post({
+                    url: '/upload-text/',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        alert('Text file uploaded: ' + data.filename);
+                    }
+                });
+            });
+
+            $('#upload-image-btn').click(function() {
+                const fileInput = document.getElementById('image-file');
+                const file = fileInput.files[0];
+                const formData = new FormData();
+                formData.append('file', file);
+                $.post({
+                    url: '/upload-image/',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        alert('Image uploaded: ' + data.filename);
+                    }
                 });
             });
         });
