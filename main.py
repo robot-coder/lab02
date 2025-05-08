@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
@@ -9,9 +10,16 @@ class Message(BaseModel):
 
 @app.post("/chat/")
 async def chat(message: Message):
-    # Here we would call the LiteLLM API to get a response
-    # For now, we will return a mock response
-    return {"response": f"You said: {message.user_input}"}
+    # Call the LiteLLM API to get a response
+    api_key = os.getenv('OPENROUTER_API_KEY')
+    response = requests.post(
+        'https://api.openrouter.ai/v1/chat',
+        headers={'Authorization': f'Bearer {api_key}'},
+        json={'prompt': message.user_input}
+    )
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail="Error calling LLM")
+    return response.json()
 
 @app.get("/")
 async def root():
