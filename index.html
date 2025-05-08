@@ -1,75 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Assistant</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
-    <h1>Chat Assistant</h1>
-    <div id="chat-box"></div>
-    <input type="text" id="user-input" placeholder="Type your message..." />
-    <button id="send-btn">Send</button>
+<h2>Compare Responses</h2>
+<input type="text" id="compare-input" placeholder="Type your message..." />
+<button id="compare-btn">Compare</button>
+<div id="comparison-box"></div>
 
-    <h2>Upload Files</h2>
-    <input type="file" id="text-file" accept=".txt" />
-    <button id="upload-text-btn">Upload Text</button>
-    <input type="file" id="image-file" accept="image/*" />
-    <button id="upload-image-btn">Upload Image</button>
-
-    <script>
-        let conversation = [];
-        $(document).ready(function() {
-            $('#send-btn').click(function() {
-                const userInput = $('#user-input').val();
-                conversation.push({ role: 'user', content: userInput });
-                $.post('/chat/', { user_input: userInput }, function(data) {
-                    conversation.push({ role: 'assistant', content: data.response });
-                    updateChatBox();
-                    $('#user-input').val('');
-                });
-            });
-
-            $('#upload-text-btn').click(function() {
-                const fileInput = document.getElementById('text-file');
-                const file = fileInput.files[0];
-                const formData = new FormData();
-                formData.append('file', file);
-                $.post({
-                    url: '/upload-text/',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(data) {
-                        alert('Text file uploaded: ' + data.filename);
-                    }
-                });
-            });
-
-            $('#upload-image-btn').click(function() {
-                const fileInput = document.getElementById('image-file');
-                const file = fileInput.files[0];
-                const formData = new FormData();
-                formData.append('file', file);
-                $.post({
-                    url: '/upload-image/',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(data) {
-                        alert('Image uploaded: ' + data.filename);
-                    }
-                });
-            });
+<script>
+    $('#compare-btn').click(function() {
+        const userInput = $('#compare-input').val();
+        $.post('/compare/', { user_input: userInput }, function(data) {
+            $('#comparison-box').empty();
+            $('#comparison-box').append('<div>Response 1: ' + data.response1 + '</div>');
+            $('#comparison-box').append('<div>Response 2: ' + data.response2 + '</div>');
         });
-
-        function updateChatBox() {
-            $('#chat-box').empty();
-            conversation.forEach(msg => {
-                $('#chat-box').append(`<div>${msg.role.charAt(0).toUpperCase() + msg.role.slice(1)}: ${msg.content}</div>`);
-            });
-        }
-    </script>
-</body>
-</html>
+    });
+</script>
