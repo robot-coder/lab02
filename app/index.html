@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Assistant</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Chat Assistant</h1>
+    <div id="chat"></div>
+    <input type="text" id="user_input" placeholder="Type your message..." />
+    <button id="send_button">Send</button>
+
+    <script>
+        $(document).ready(function() {
+            $('#send_button').click(function() {
+                const userInput = $('#user_input').val();
+                $.post('/send_message/', { user: 'User', content: userInput }, function(data) {
+                    $('#chat').append('<div>User: ' + userInput + '</div>');
+                    $('#chat').append('<div>Assistant: ' + data[data.length - 1].content + '</div>');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
