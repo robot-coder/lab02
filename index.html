@@ -13,16 +13,25 @@
     <button id="send-btn">Send</button>
 
     <script>
+        let conversation = [];
         $(document).ready(function() {
             $('#send-btn').click(function() {
                 const userInput = $('#user-input').val();
+                conversation.push({ role: 'user', content: userInput });
                 $.post('/chat/', { user_input: userInput }, function(data) {
-                    $('#chat-box').append('<div>User: ' + userInput + '</div>');
-                    $('#chat-box').append('<div>Assistant: ' + data.response + '</div>');
+                    conversation.push({ role: 'assistant', content: data.response });
+                    updateChatBox();
                     $('#user-input').val('');
                 });
             });
         });
+
+        function updateChatBox() {
+            $('#chat-box').empty();
+            conversation.forEach(msg => {
+                $('#chat-box').append(`<div>${msg.role.charAt(0).toUpperCase() + msg.role.slice(1)}: ${msg.content}</div>`);
+            });
+        }
     </script>
 </body>
 </html>
