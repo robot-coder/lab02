@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Assistant</title>
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById('userInput').value;
+            const response = await fetch('/send_message/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({user: 'User', text: userInput})
+            });
+            const conversation = await response.json();
+            displayConversation(conversation);
+        }
+
+        function displayConversation(conversation) {
+            const chatBox = document.getElementById('chatBox');
+            chatBox.innerHTML = '';
+            conversation.forEach(msg => {
+                const messageElement = document.createElement('div');
+                messageElement.textContent = `${msg.user}: ${msg.text}`;
+                chatBox.appendChild(messageElement);
+            });
+        }
+    </script>
+</head>
+<body>
+    <div id="chatBox"></div>
+    <input type="text" id="userInput" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+</body>
+</html>
