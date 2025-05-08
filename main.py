@@ -1,7 +1,7 @@
-import os
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from pydantic import BaseModel
 import requests
+import os
 
 app = FastAPI()
 
@@ -20,6 +20,18 @@ async def chat(message: Message):
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail="Error calling LLM")
     return response.json()
+
+@app.post("/upload-text/")
+async def upload_text(file: UploadFile = File(...)):
+    content = await file.read()
+    # Process the text file content here
+    return {"filename": file.filename, "content": content.decode('utf-8')}
+
+@app.post("/upload-image/")
+async def upload_image(file: UploadFile = File(...)):
+    content = await file.read()
+    # Process the image file content here
+    return {"filename": file.filename, "message": "Image uploaded successfully"}
 
 @app.get("/")
 async def root():
